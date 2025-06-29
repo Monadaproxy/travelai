@@ -1,0 +1,125 @@
+{% extends 'main/layout.html' %}
+
+
+{% block title %}
+    {{ profile_user.username }}
+{% endblock %}
+
+
+{% block content %}
+    <div class="features" style="color: black;">
+        <div class="alert alert-secondary" style="margin-top: 0px; height: 200px;">
+                <div class="avatar-upload" style="text-align: center; place-items: center;">
+                    {% if profile_user.profile.avatar %}
+                    <img src="{{ profile_user.profile.avatar.url }}"
+                         class="avatar-preview" alt="Аватар" style="width: 160px; height: 160px; float: left;">
+                    {% else %}
+                        <p>*Аватар не установлен*</p>
+                    {% endif %}
+                    <h2 style="color: black; float: center; font-size: 25px;">{{ profile_user.username }}</h2>
+                    {% if profile_user.profile.bio %}
+                        <h4 style="text-align: left; position: relative; right: -10px;">{{ profile_user.profile.bio }}</h4>
+                    {% else %}
+                        <h4 style="text-align: center; position: relative; right: -10px;">*Статус отсутствует*</h4>
+                    {% endif %}
+                    <h6 style="float: left; position: relative; right: -10px;">Город : {{ profile_user.profile.city }}</h6>
+
+                    {% if not is_owner %}
+                        <a href="{% url 'messaging:start_conversation' profile_user.id %}"><button class="btn btn-dark" style="float: right; position: relative; right: -100px; top: 15px; height: 40px; width: 150px;">Диалог</button></a>
+                    {% endif %}
+                    {% if not is_owner %}
+                        {% if not friendship_status.request_sent and not friendship_status.request_received and not friendship_status.is_friend %}
+                            <a href="{% url 'friends:send_friend_request' profile_user.id %}" class="btn btn-primary" style="position: relative; right: -15px;">
+                                Добавить в друзья
+                            </a>
+                        {% elif friendship_status.request_sent and not friendship_status.request_received and not friendship_status.is_friend %}
+                            <p style="float: left; position: relative; right: -15px;">
+                                (Запрос на дружбу отправлен)
+                            </p>
+                        {% elif friendship_status.request_received and not friendship_status.request_sent and not friendship_status.is_friend %}
+                            <a href="{% url 'friends:friendship_requests' %}" class="btn btn-info" style="float: left; position: relative; right: -15px;">
+                                Ответить на запрос
+                            </a>
+                        {% elif friendship_status.is_friend %}
+                            <span class="badge bg-success" style="float: left; position: relative; right: -10px;">У вас в друзьях</span>
+                        {% endif %}
+                    {% endif %}
+                </div>
+        </div>
+        <div class="features">
+        {% if news %}
+            <div class="alert alert-secondary" style="place-items: center;">
+                <h2 style="color: black;">Записи {{ profile_user.username }}</h2>
+                {% for el in news %}
+                    <div class="alert alert-secondary" style="background: rgb(235, 235, 235)">
+                        {% with profile=profile_user.profile %}
+                            {% if profile.avatar %}
+                                <img src="{{ profile.avatar.url }}" style="height: 60px; width: 60px; border-radius: 50%; border: 1px solid black; float: left;" alt="Лого">
+                            {% endif %}
+                        {% endwith %}
+                        <h2 style="position: relative; right: -10px; top: 8px;">{{ profile_user.username }}</h2>
+                        <h2 style="margin-top: 25px;">{{ el.title }}</h2>
+                        <h5>{{ el.anounce }}</h5>
+                        <small>{{ el.date }}</small>
+                        <form method="post">
+                            {% csrf_token %}
+                            <span>{{ error }}</span>
+                            {% if is_owner %}
+                                <div class="suc_button">
+                                    <a href="{% url 'news-detail' el.id %}"><button class="btn btn-success">Открыть</a>
+                                </div>
+                            {% endif %}
+                        </form>
+                    </div>
+            {% endfor %}
+            </div>
+        {% else %}
+            {% if is_owner %}
+                <div class="feat_to_delete">
+                    <h1>Записи отсутствуют</h1>
+                    <h3>Создайте первую с помощью кнопки на боковой панели &#128526</h3>
+                </div>
+            {% else %}
+                <p style="font-size: 35px; margin-top: 250px;">Здесь пусто...</p>
+            {% endif %}
+        {% endif %}
+        {% if is_owner %}
+            <a href="{% url 'users:profile_edit' user.username %}"><button class="btn btn-light" style="margin-top: 20px;"><h5>Редактирование профиля</h5></button></a>
+        {% endif %}
+    </div>
+
+
+<script>
+document.getElementById('avatar-upload').addEventListener('change', function(e) {
+    if (e.target.files.length > 0) {
+        const file = e.target.files[0];
+        const reader = new FileReader();
+
+        reader.onload = function(e) {
+            const preview = document.getElementById('avatar-preview');
+            if (preview.tagName === 'IMG') {
+                preview.src = e.target.result;
+            } else {
+                preview.innerHTML = `<img src="${e.target.result}" width="150" style="border-radius:50%">`;
+            }
+            document.querySelector('form').submit();
+        };
+
+        reader.readAsDataURL(file);
+    }
+});
+</script>
+
+<style>
+.upload-btn {
+    background: #4CAF50;
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+</style>
+
+
+{% endblock %}

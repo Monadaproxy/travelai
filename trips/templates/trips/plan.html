@@ -1,0 +1,46 @@
+{% extends 'main/layout.html' %}
+
+{% block title %}
+    Генерация марщрута
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1>Спланируйте путешествие</h1>
+    <form id="tripForm" method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-primary" id="generateBtn">Сгенерировать</button>
+    </form>
+    <div id="result" class="mt-4" style="display: none;">
+        <h2>Ваш маршрут:</h2>
+        <div id="itinerary"></div>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+$(document).ready(function() {
+    $('#tripForm').on('submit', function(e) {
+        e.preventDefault();
+        $('#generateBtn').prop('disabled', true).text('Генерация...');
+        
+        $.ajax({
+            type: 'POST',
+            url: '{% url "trips:plan" %}',
+            data: $(this).serialize(),
+            success: function(response) {
+                $('#itinerary').html(response.itinerary);
+                $('#result').show();
+            },
+            error: function(xhr) {
+                alert('Ошибка: ' + xhr.responseJSON.error);
+            },
+            complete: function() {
+                $('#generateBtn').prop('disabled', false).text('Сгенерировать');
+            }
+        });
+    });
+});
+</script>
+{% endblock %}
