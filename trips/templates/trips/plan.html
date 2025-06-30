@@ -1,8 +1,6 @@
 {% extends 'main/layout.html' %}
 
-{% block title %}
-    Генерация марщрута
-{% endblock %}
+{% block title %}Генерация маршрута{% endblock %}
 
 {% block content %}
 <div class="container">
@@ -12,10 +10,6 @@
         {{ form.as_p }}
         <button type="submit" class="btn btn-primary" id="generateBtn">Сгенерировать</button>
     </form>
-    <div id="result" class="mt-4" style="display: none;">
-        <h2>Ваш маршрут:</h2>
-        <div id="itinerary"></div>
-    </div>
 </div>
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -23,24 +17,43 @@
 $(document).ready(function() {
     $('#tripForm').on('submit', function(e) {
         e.preventDefault();
-        $('#generateBtn').prop('disabled', true).text('Генерация...');
-        
+        const $btn = $('#generateBtn');
+        $btn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm"></span> Генерация...');
+
         $.ajax({
             type: 'POST',
             url: '{% url "trips:plan" %}',
             data: $(this).serialize(),
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            },
             success: function(response) {
                 $('#itinerary').html(response.itinerary);
                 $('#result').show();
+
+                // Прокрутка к результату
+                $('html, body').animate({
+                    scrollTop: $('#result').offset().top
+                }, 500);
             },
             error: function(xhr) {
-                alert('Ошибка: ' + xhr.responseJSON.error);
+                let errorMsg = 'Ошибка';
+                if (xhr.responseJSON && xhr.responseJSON.error) {
+                    errorMsg = xhr.responseJSON.error;
+                }
+                alert(errorMsg);
             },
             complete: function() {
-                $('#generateBtn').prop('disabled', false).text('Сгенерировать');
+                $btn.prop('disabled', false).text('Сгенерировать');
             }
         });
     });
 });
 </script>
+
+<style>
+    .spinner-border {
+        vertical-align: text-top;
+    }
+</style>
 {% endblock %}

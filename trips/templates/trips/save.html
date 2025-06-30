@@ -1,0 +1,27 @@
+{% extends 'main/layout.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="card">
+        <div class="card-header">
+            <h2>Ваш маршрут готов!</h2>
+        </div>
+        <div class="card-body">
+            <div class="itinerary-content">
+                {{ itinerary }}
+            </div>
+
+            <form id="saveForm" method="post" action="{% url 'trips:save_trip' %}">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-success btn-lg mt-3">
+                    <i class="fas fa-save"></i> Сохранить маршрут
+                </button>
+
+                <a href="{% url 'trips:plan' %}" class="btn btn-outline-primary mt-3 ml-2">
+                    <i class="fas fa-redo"></i> Создать новый
+                </a>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

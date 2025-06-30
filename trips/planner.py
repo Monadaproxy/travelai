@@ -1,32 +1,34 @@
+from django.http import JsonResponse
 from openai import OpenAI
 import json
 import httpx
 from travelai import settings
+import requests
+from mistralai import Mistral
 
 def generate_itinerary(destination, dates, interests):
-    proxy_client = httpx.Client(
-        proxies="http://43.199.163.10:3128",
-        timeout=30.0
-    )
-
-    client = OpenAI(api_key=settings.OPENAI_API_KEY, http_client=proxy_client)
+    api_key = settings.MISTRAL_API_KEY
+    model = 'mistral-large-latest'
+    client = Mistral(api_key=api_key)
 
     prompt = f"""
-    Создай маршрут для {destination} на {dates}. 
+    Создай подробный маршрут по городу {destination} на {dates}. 
     Интересы: {interests}. Включи:
     1. Места с описанием (не более 3 в день)
     2. Время посещения
     3. Советы по транспорту
-    Формат: JSON с временными слотами и координатами.
+    Опиши подробно каждое место
+    Формат вывода: JSON с временными слотами и координатами.
+    Верни только JSON строку.
     """
 
     try:
-        response = client.chat.completions.create(
-            model="gpt-4",
-            messages=[{"role": "user", "content": prompt}],
-            timeout=30.0
+        response = client.chat.complete(
+            model = model,
+            messages = [{'role': 'user', 'content': prompt}]
         )
-        return json.loads(response.choices[0].message.content)
+        return response.choices[0].message.content[7:-3]
 
     except Exception as e:
+        print(f'ХУЙ ТАМ ПЛАВАЛ: {e}')
         return {'error': str(e)}

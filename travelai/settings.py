@@ -113,5 +113,6 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
 
 OPENWEATHER_API_KEY = os.getenv('OPENWEATHER_API_KEY')
 OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
+MISTRAL_API_KEY = os.getenv('MISTRAL_API_KEY')
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
