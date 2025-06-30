@@ -5,5 +5,5 @@ app_name = 'trips'
 
 urlpatterns = [
     path('plan/', views.generate_trip, name='plan'),
-    path('save/', views.save_trip, name='save_trip'),
+    path('list/', views.trips_list, name='list'),
 ]

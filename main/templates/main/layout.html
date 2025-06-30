@@ -16,9 +16,12 @@
         {% if user.is_authenticated %}
             {% with profile=user.profile %}
                 {% if profile.avatar %}
-                    <img src="{{ profile.avatar.url }}" style="height: 70px; width: 70px; border-radius: 50%; border: 2px solid #fff" alt="Лого">
+                    <img src="{{ profile.avatar.url }}" style="height: 80px; width: 80px; border-radius: 50%; border: 1px solid #fff" alt="Лого">
                 {% else %}
-                    <p>*Аватар не установлен*<p>
+                    <div class="bg-secondary rounded-circle d-inline-flex align-items-center justify-content-center mb-2"
+                         style="width: 80px; height: 80px; border: 1px solid #fff">
+                        <span class="text-white display-6">{{ user.username|first|upper }}</span>
+                    </div>
                 {% endif %}
             {% endwith %}
             <span class="logo">{{ user.username }}</span>
@@ -27,6 +30,7 @@
         <ul>
             <a href="{% url 'home' %}"><li><i class="fas fa-home"></i>ГЛАВНАЯ</li></a>
             <a href="{% url 'users:profile' user.username %}"><li><i class="fas fa-user-circle"></i>ПРОФИЛЬ</li></a>
+            <a href="{% url 'trips:list' %}"><li><i class="fa fa-plane"></i>ПОЕЗДКИ</li></a>
             <a href="{% url 'users:login' %}"><li><i class="fas fa-door-open"></i>ВЫЙТИ</li></a>
             <a href="{% url 'trips:plan' %}"><li><button class="btn btn-dark"><i class="fas fa-plus-circle"></i>СГЕНЕРИРОВАТЬ МАРШРУТ</li></a>
         </ul>

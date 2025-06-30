@@ -1,9 +1,4 @@
-from django.http import JsonResponse
-from openai import OpenAI
-import json
-import httpx
 from travelai import settings
-import requests
 from mistralai import Mistral
 
 def generate_itinerary(destination, dates, interests):
@@ -30,5 +25,5 @@ def generate_itinerary(destination, dates, interests):
         return response.choices[0].message.content[7:-3]
 
     except Exception as e:
-        print(f'ХУЙ ТАМ ПЛАВАЛ: {e}')
         return {'error': str(e)}
+

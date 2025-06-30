@@ -5,6 +5,7 @@ from trips.models import Trip
 
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
+    avatar = models.ImageField(upload_to='avatars/', blank=True, null=True)
     city = models.CharField(default='Moscow', max_length=30)
     saved_trips = models.ManyToManyField(Trip)
 

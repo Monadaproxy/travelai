@@ -9,3 +9,8 @@ class Trip(models.Model):
     itinerary = models.JSONField()  # {"День 1": [{"place": "Колизей", "time": "10:00"}]}
     bookings = models.JSONField(default=dict)  # {"Отель": {"link": "...", "price": 100}}
     created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['-created_at']
+        verbose_name = 'Поездка'
+        verbose_name_plural = 'Поездки'

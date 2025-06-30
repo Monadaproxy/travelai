@@ -1,0 +1,23 @@
+{% extends 'main/layout.html' %}
+
+
+{% block title %}
+    Профиль
+{% endblock %}
+
+
+{% block content %}
+    <div class="features" style="color: black">
+        <div class="alert alert-secondary" style="margin-top: 0px;">
+                <div class="avatar-upload" style="text-align: center">
+                    <h3>Здесь находятся ваши запланированные поездки</h3>
+                </div>
+        </div>
+        <div class="alert alert-secondary">
+            {% for t in trips %}
+                <h3>{{ t }}</h3>
+            {% endfor %}
+        </div>
+    </div>
+
+{% endblock %}

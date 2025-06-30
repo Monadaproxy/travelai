@@ -1,10 +1,12 @@
 from django.http import JsonResponse
-from django.shortcuts import render
+from django.shortcuts import render, redirect, reverse
 from django.views.decorators.http import require_POST
 from .forms import TripPlanForm
 from .planner import generate_itinerary
 from .models import Trip
 import json
+import urllib.parse
+import base64
 
 
 
@@ -18,32 +20,27 @@ def generate_trip(request):
             interests = form.cleaned_data['interests']
 
             try:
-                itinerary = generate_itinerary(destination, dates, interests)
-                print(itinerary)
-                itinerary = json.loads(itinerary)
-                print(itinerary)
-                return render(request, 'trips/save.html', {'itinerary': itinerary})
+                itinerary = json.loads(generate_itinerary(destination, dates, interests))
+                trip = Trip.objects.create(
+                    user=request.user,
+                    destination=destination,
+                    start_date=form.cleaned_data['start_date'],
+                    end_date=form.cleaned_data['end_date'],
+                    itinerary=itinerary,
+                )
+                return redirect('users:profile', username=request.user.username)
 
             except Exception as e:
                 return JsonResponse({'error': str(e)}, status=500)
 
     return render(request, 'trips/plan.html', {'form': form})
 
-@require_POST
-def save_trip(request):
-    try:
-        data = request.POST
-        trip = Trip.objects.create(
-            user=request.user,
-            destination=data.get('destination'),
-            start_date=data.get('start_date'),
-            end_date=data.get('end_date'),
-            interests=data.get('interests'),
-            itinerary=json.loads(data.get('itinerary'))
-        )
-        print('СОХРАНИЛ')
-        return JsonResponse({'status': 'success', 'trip_id': trip.id})
-    except Exception as e:
-        print(f'НЕ СОХРА7НИЛ {e}')
-        return JsonResponse({'status': 'error', 'message': str(e)}, status=400)
+def trips_list(request):
+    trips = Trip.objects.filter(user=request.user)
+    return render(request, 'trips/list.html', {'trips': trips})
+
+
+
+
+
 

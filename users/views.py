@@ -5,6 +5,7 @@ from django.views.generic import CreateView
 from .forms import LoginUserForm, RegisterUserForm, ProfileUpdateForm
 from django.contrib.auth.models import User
 from .models import Profile
+from trips.models import Trip
 
 
 class LoginUser(LoginView):
