@@ -6,8 +6,8 @@ class Trip(models.Model):
     destination = models.CharField(max_length=100)  # "Рим"
     start_date = models.DateField()
     end_date = models.DateField()
-    itinerary = models.JSONField()  # {"День 1": [{"place": "Колизей", "time": "10:00"}]}
-    bookings = models.JSONField(default=dict)  # {"Отель": {"link": "...", "price": 100}}
+    itinerary = models.JSONField()
+    hotel = models.CharField(max_length=150, default='Null')
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:

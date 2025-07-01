@@ -1,12 +1,11 @@
 from django.http import JsonResponse
-from django.shortcuts import render, redirect, reverse
+from django.shortcuts import render, redirect, get_object_or_404
 from django.views.decorators.http import require_POST
 from .forms import TripPlanForm
 from .planner import generate_itinerary
 from .models import Trip
 import json
-import urllib.parse
-import base64
+
 
 
 
@@ -27,8 +26,9 @@ def generate_trip(request):
                     start_date=form.cleaned_data['start_date'],
                     end_date=form.cleaned_data['end_date'],
                     itinerary=itinerary,
+                    hotel=itinerary['hotel']
                 )
-                return redirect('users:profile', username=request.user.username)
+                return redirect('trips:list')
 
             except Exception as e:
                 return JsonResponse({'error': str(e)}, status=500)
@@ -39,7 +39,11 @@ def trips_list(request):
     trips = Trip.objects.filter(user=request.user)
     return render(request, 'trips/list.html', {'trips': trips})
 
-
+@require_POST
+def delete_trip(request, trip_id):
+    trip = get_object_or_404(Trip, id=trip_id, user=request.user)
+    trip.delete()
+    return redirect('trips:list')
 
 
 

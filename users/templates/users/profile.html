@@ -9,9 +9,8 @@
 {% block content %}
     <div class="features" style="color: black">
         <div class="alert alert-secondary" style="margin-top: 0px;">
-                <div class="avatar-upload" style="text-align: center">
+                <div class="card day-card mb-4" style="text-align: center; place-items: center;">
                     <h1>Ваш профиль</h1>
-                    <h4>{{ user.username }}</h4>
                     {% if request.user.profile.avatar %}
                     <img src="{{ request.user.profile.avatar.url }}"
                          class="avatar-preview" alt="Аватар">
@@ -21,13 +20,8 @@
                             <span class="text-white display-6">{{ user.username|first|upper }}</span>
                         </div>
                     {% endif %}
-                    <form method="post" enctype="multipart/form-data">
-                        {% csrf_token %}
-                        {{ form.as_p }}
-                        <button type="submit" class="upload-btn" style="display: none">Загрузить</button>
-                        <button onclick="document.getElementById('avatar-upload').click()"
-                            class="btn btn-primary mt-3"><i class="fas fa-upload"></i>Обновить</button>
-                    </form>
+                    <h4>Имя: {{ user.username }}</h4>
+                    <h5>Город: {{ user.profile.city }}</h5>
                 </div>
         </div>
         <a href="{% url 'users:profile_edit' user.username %}"><button class="btn btn-light" style="margin-top: 20px;"><h5>Редактирование профиля</h5></button></a>
